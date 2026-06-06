@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ClassStream {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  form      String
+  section   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  students  Student[]
+  subjects  ClassStreamSubject[]
+}
+
+model Student {
+  id            String       @id @default(cuid())
+  admNo         String       @unique
+  firstName     String
+  lastName      String
+  dateOfBirth   String?
+  gender        String
+  guardianName  String?
+  guardianPhone String?
+  classStreamId String
+  classStream   ClassStream  @relation(fields: [classStreamId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  scores        Score[]
+}
+
+model Subject {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  streams     ClassStreamSubject[]
+  scores      Score[]
+}
+
+model ClassStreamSubject {
+  id            String      @id @default(cuid())
+  classStreamId String
+  subjectId     String
+  classStream   ClassStream @relation(fields: [classStreamId], references: [id])
+  subject       Subject     @relation(fields: [subjectId], references: [id])
+  @@unique([classStreamId, subjectId])
+}
+
+model Score {
+  id          String   @id @default(cuid())
+  studentId   String
+  subjectId   String
+  examScore   Float    @default(0)
+  catScore    Float    @default(0)
+  term        String   @default("Term 1")
+  year        Int      @default(2025)
+  student     Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     Subject  @relation(fields: [subjectId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@unique([studentId, subjectId, term, year])
+}
+
+model GradingScale {
+  id        String   @id @default(cuid())
+  grade     String
+  minScore  Float
+  maxScore  Float
+  points    Int
+  createdAt DateTime @default(now())
+}
