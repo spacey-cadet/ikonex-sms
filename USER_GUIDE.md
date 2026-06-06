@@ -61,11 +61,14 @@ npm i -g vercel
 # Deploy
 vercel --prod
 ```
-Set environment variable `DATABASE_URL` in Vercel dashboard.
+Create ampy db in torso
+Get DATABASE URL and create token 
+Set environment variable `DATABASE_URL` in Vercel dashboard. 
 
 For persistent production data, use **Turso** (libSQL cloud):
 ```
-DATABASE_URL="libsql://your-db.turso.io?authToken=your-token"
+DATABASE_URL=""
+TORSO_AUTH_TOKEN""
 ```
 
 ### Railway / Render
